@@ -1,6 +1,6 @@
 'use strict';
 
-export const DEFAULT_USER_NAME="Ayrat";
+export const DEFAULT_USER_NAME="%username%";
 
 export  class Chat {
     constructor(el, data) {
@@ -12,9 +12,14 @@ export  class Chat {
                     nickname:'',
                     text:'Text',
                     data:new Date()
-                },
+                }
             ],
         };
+    }
+
+    addMessage(messageObj) {
+        this.data.messages.push(messageObj);
+        this.render();
     }
 
     render() {
@@ -28,7 +33,10 @@ export  class Chat {
     }
 
     _getMessagesHTML() {
-       // this.data.messages.map((messageObj) =>`<span class="chat_message"> ${}`);
+       return  this.data.messages
+           .map((messageObj) =>`<span class="chat_message"> ${messageObj.nickname}:${messageObj.text}</span>`)
+           .join(`<br>`);
+
     }
     
 }
