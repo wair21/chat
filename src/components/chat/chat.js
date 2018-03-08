@@ -1,42 +1,79 @@
-'use strict';
-
-export const DEFAULT_USER_NAME="%username%";
-
-export  class Chat {
-    constructor(el, data) {
+export class Chat {
+    constructor({el, data = {messages: []}}) {
         this.el = el;
-        this.data = {
-            nickname:DEFAULT_USER_NAME,
-            messages:[
-                {
-                    nickname:'',
-                    text:'Text',
-                    data:new Date()
-                }
-            ],
+        this.data = data;
+
+        this._scrollStrategy = 'bottom';
+
+        this._initEvents();
+    }
+
+    _initEvents() { }
+
+    render({scroll} = {}) {
+        this._saveScrollTop();
+        this.el.innerHTML = chatTemplate(this.data);
+        this._restoreScrollTop(scroll);
+    }
+
+    _saveScrollTop() {
+        let chatBox = this.el.querySelector('.chat__box');
+
+        if (chatBox) {
+            this._scrollTop = chatBox.scrollTop;
+        }
+    }
+
+    _restoreScrollTop() {
+        let chatBox = this.el.querySelector('.chat__box');
+
+        if (chatBox) {
+            switch (this._scrollStrategy) {
+                case 'bottom':
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                    break;
+                case 'fixed':
+                    chatBox.scrollTop = this._scrollTop;
+            }
+        }
+    }
+
+    _updateMessages() {
+        this.data.messages = this.data.messages.sort((message1, message2) => {
+            return message2.date - message1.date;
+        });
+    }
+
+    setMessages(messages = []) {
+        this.data.messages.length = 0;
+        this.add(messages);
+    }
+
+    setScrollStrategy(strategy) {
+        this._scrollStrategy = strategy;
+    }
+
+    add(messages = []) {
+        let addOneMessageMethod = this.addOne.bind(this);
+
+        messages.forEach(addOneMessageMethod);
+    }
+
+    addOne(data) {
+        this.data.messages.push(this._prepareMessage(data));
+    }
+
+    _prepareMessage({name, text, date = Date.now(), html}) {
+        return {
+            name,
+            isMine: name === this.data.user,
+            text,
+            date: new Date(date),
+            html
         };
     }
 
-    addMessage(messageObj) {
-        this.data.messages.push(messageObj);
-        this.render();
+    setUserName(name) {
+        this.data.user = name;
     }
-
-    render() {
-        this.el.innerHTML = `
-            <div class="chat">
-                <div class="chat__messages">
-                    ${this._getMessagesHTML()}
-                </div>
-            </div>
-            `;
-    }
-
-    _getMessagesHTML() {
-       return  this.data.messages
-           .map((messageObj) =>`<span class="chat_message"> ${messageObj.nickname}:${messageObj.text}</span>`)
-           .join(`<br>`);
-
-    }
-    
 }
