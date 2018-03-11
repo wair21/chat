@@ -15,6 +15,10 @@ export class Form {
         `;
     }
 
+    reset() {
+        this.el.querySelector('form').reset();
+    }
+
     _onSubmit(event) {
         event.preventDefault();
         this.onSubmit({

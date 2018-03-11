@@ -1,26 +1,48 @@
 import {Chat} from './../chat/chat.js';
 import {Form} from './../form/form.js';
 
+const CHAT_ENDPOINT = 'https://chat-c5896.firebaseio.com/chat.json';
+
 export class App {
     constructor({el}) {
         this.el = el;
         this.chat = new Chat({
             el: document.createElement('div')
         });
+
         this.form = new Form({
             el: document.createElement('div'),
             onSubmit: this._onFormSubmit.bind(this)
         });
 
         this.el.append(this.chat.el, this.form.el);
-        this.chat.add([
-            {
-                name: 'AI',
-                text: 'Привет, я чат!'
-            }
-        ]);
+
+        setInterval(this.fetchData.bind(this), 2000);
 
         this.render();
+    }
+
+    fetchData() {
+        fetch(CHAT_ENDPOINT)
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                this.chat.setMessages(Object.values(data));
+                this.chat.render();
+            })
+    }
+
+
+    postData(data) {
+        fetch(CHAT_ENDPOINT,{
+            method:'POST',
+            body:JSON.stringify(data),
+            headers: new Headers({
+                'Content-Type': 'application/json',
+            }),
+        })
+
     }
 
     render() {
@@ -28,11 +50,8 @@ export class App {
         this.form.render();
     }
 
-    _onFormSubmit({text}) {
-        this.chat.addOne({
-            text,
-            name: 'Me'
-        });
-        this.render();
+    _onFormSubmit(messageData) {
+        this.form.reset();
+        this.postData(messageData);
     }
 }
