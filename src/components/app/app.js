@@ -3,6 +3,9 @@ import {Form} from './../form/form.js';
 
 const CHAT_ENDPOINT = 'https://chat-c5896.firebaseio.com/chat.json';
 
+/**
+ * Главный компонент приложения
+ */
 export class App {
     constructor({el}) {
         this.el = el;
@@ -22,6 +25,9 @@ export class App {
         this.render();
     }
 
+    /**
+     * Запрос данных с сервера
+     */
     fetchData() {
         fetch(CHAT_ENDPOINT)
             .then((res) => {
@@ -50,6 +56,11 @@ export class App {
         this.form.render();
     }
 
+    /**
+     * ОБработчик кнопки отправки сообщений
+     * @param messageData
+     * @private
+     */
     _onFormSubmit(messageData) {
         this.form.reset();
         this.postData(messageData);

@@ -1,3 +1,7 @@
+/**
+ * Компонент отображения чата
+ * Здесь вся логика
+ */
 export class Chat {
     constructor({el, data = {messages: []}}) {
         this.el = el;

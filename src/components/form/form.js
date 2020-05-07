@@ -1,3 +1,6 @@
+/**
+ * Компонент отображения формы отправки сообщения
+ */
 export class Form {
     constructor({el, onSubmit}) {
         this.el = el;
@@ -19,6 +22,11 @@ export class Form {
         this.el.querySelector('form').reset();
     }
 
+    /**
+     * Обработчик события кнопки Отправить
+     * @param event
+     * @private
+     */
     _onSubmit(event) {
         event.preventDefault();
         this.onSubmit({
