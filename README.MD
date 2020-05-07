@@ -1,4 +1,4 @@
-Учебный проект - чат
+Проект чата с firebase и react. 
 
 ```
 $npm install
